@@ -172,8 +172,13 @@ bot.command('/start', (ctx) => {
 
 //tengo un escuchador que se dispara con texto escrito, pero no registra cuando hay comandos
 bot.on('text', (ctx) => {
-    ctx.reply("¿Por qué me dices " + ctx.message.text + " ?")
-    usuarioDAO.guardarMensaje(ctx.message.text, ctx.message.from.id)
+    let escrito = ctx.message.text
+    let respuesta
+    if (escrito.includes("adios")) respuesta = "Pues adiós, yo aqui me quedo programando"
+    else respuesta = "¿Por qué me dices " + escrito + " ?"
+    ctx.reply(respuesta)
+    //guarda el mensaje en la
+    usuarioDAO.guardarMensaje(escrito, ctx.message.from.id)
         .then((result) => { console.log(result) })
         .catch((err) => { console.log(err) })
 })

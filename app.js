@@ -10,9 +10,7 @@ var app = express();
 
 require("./bot.js") //AQUI VA LO DEL BOT en otro archivo
 
-// env unbotnazi name
-// unbotnazibot  username
-// token 1060060456:AAH9B5canymV-qyl3Zq0aTPNJZHSgj2Mxpg
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
