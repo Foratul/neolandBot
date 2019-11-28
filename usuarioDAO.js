@@ -69,6 +69,16 @@ let usuarioDAO = {
             })
         })
         return prom
+    },
+    getMensajesByTelegramId(id) {
+        console.log("recuperando mensajes")
+        let prom = new Promise((resolve, reject) => {
+            db.query("SELECT mensaje from bot.mensajes where telegramID=?", [id], (err, rows) => {
+                resolve(rows)
+                reject(err)
+            })
+        })
+        return prom;
     }
 }
 module.exports = { usuarioDAO: usuarioDAO }

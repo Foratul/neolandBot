@@ -8,7 +8,6 @@ var app = express();
 
 
 const bot = new Telegraf('1041852626:AAFV8bkJxE5t8AeuiQZIXI3xogsQk7Gvpec')
-app.use(bot.webhookCallback('/rutabot'))
 bot.telegram.setWebhook('https://23a0945d.ngrok.io/rutabot')
 
 bot.start((ctx) => {
@@ -135,7 +134,20 @@ bot.command("/crearDatabase", (ctx) => {
         })
 })
 
+bot.command("/misMensajes", (ctx) => {
+    usuarioDAO.getMensajesByTelegramId(ctx.from.id)
+        .then((rows) => {
+            ctx.reply("HEMOS ALMACENADO DE USTED :")
+            for (const row of rows) {
+                ctx.reply(row.mensaje)
+            }
+        })
+        .catch((error) => {
+            ctx.reply("ALGO SALIO MAL")
+            console.log(error)
+        })
 
+})
 function dameInfo(ctx) {
     // se pega la info asi que timeouts chungos
     setTimeout(() => {

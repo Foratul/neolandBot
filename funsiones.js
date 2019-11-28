@@ -6,6 +6,7 @@ let funsiones =
         "/random : manda mensaje [concreto] a usuario random : se ejecuta con /random 'mensajeAinsertar'",
         "/Mario : habla con Mario",
         "/crearDatabase crea la databse si no existe (developers)",
+        "/misMensajes : muestra tus mensajes almacenados en la base de datos",
         "el bot te replica y guarda todas tus conversaciones tambien "
 
     ]
