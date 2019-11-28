@@ -1,0 +1,12 @@
+extends layout
+block content
+    h2 Spamear cosas
+    form.form-group(action="/vista/generate" method="post")
+        label Inserte aquí su mensaje para los usuarios de la base de datos
+        input.textarea.form-control(type="textarea" , name="mensaje" , value="SPAM")
+        input(type="submit", value="Enviar")
+ 
+
+
+
+
