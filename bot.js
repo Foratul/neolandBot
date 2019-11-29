@@ -97,7 +97,7 @@ bot.command('/test', (parametros) => {
 bot.command('/SendMario', (ctx) => {
     let mensaje = ctx.message.text
     console.log("Para Mario va " + mensaje)
-    mensajearUsuario(mensaje, 7558487)
+    mensajearUsuario(mensaje, variableCensurada)
 
 
 })
