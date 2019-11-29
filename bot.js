@@ -69,7 +69,7 @@ function mensajearUsuario(mensaje = "no me ha llegado nada", destinatario = null
 
     if (destinatario === null) { //si viene nulo se lo mando a uno aleatorio de la base de datos
         usuarioDAO.getAll().then((rows) => {
-            destinatario = Math.floor(Math.random() * (rows.length))
+            let aleatorio = Math.floor(Math.random() * (rows.length))
             bot.telegram.setAsyncRequest(true).sendMessage(rows[aleatorio].telegramID, mensaje)
         })
     }
