@@ -4,7 +4,7 @@ let usuarioDAO = {
     getAll() {
         console.log("se ha llamado a get All")
         let prom = new Promise((resolve, reject) => {
-            db.query("select * from usuarios", (err, rows) => {
+            db.query("select * from usuarios2", (err, rows) => {
                 resolve(rows)
                 reject(err)
             }
@@ -15,7 +15,7 @@ let usuarioDAO = {
 
     getByTelegramID(id) {
         let prom = new Promise((resolve, reject) => {
-            db.query("SELECT * from bot.usuarios where telegramID =?", [id], (err, rows) => {
+            db.query("SELECT * from bot.usuarios2 where telegramID =?", [id], (err, rows) => {
                 if (err) reject(err)
                 resolve(rows)
             })
@@ -27,7 +27,7 @@ let usuarioDAO = {
         console.log("se ha llamado a insertDAO")
         let prom = new Promise((resolve, reject) => {
             if (!objetoFrom.last_name) objetoFrom.last_name = ""
-            db.query("INSERT INTO bot.usuarios values (null, ?, ?, ?, ?)", [objetoFrom.first_name + objetoFrom.last_name, objetoFrom.first_name, objetoFrom.last_name, objetoFrom.id], (err, results) => {
+            db.query("INSERT INTO bot.usuarios2 values (null, ?, ?, ?, ?)", [objetoFrom.first_name + objetoFrom.last_name, objetoFrom.first_name, objetoFrom.last_name, objetoFrom.id], (err, results) => {
                 resolve(results)
                 reject(err)
             })
@@ -40,7 +40,7 @@ let usuarioDAO = {
         console.log("Creando DB")
         let prom = new Promise((resolve, reject) => {
             db.query(
-                "create table if not exists usuarios (ID INT(10) primary key auto_increment, username VARCHAR(50), first_name VARCHAR(30), last_name VARCHAR(30), telegramID INT(20)); ",
+                "create table if not exists usuarios2 (ID INT(10) primary key auto_increment, username VARCHAR(50), first_name VARCHAR(30), last_name VARCHAR(30), telegramID INT(20)); ",
                 (err, res) => {
                     resolve(res)
                     reject(err)
@@ -62,8 +62,9 @@ let usuarioDAO = {
     },
     guardarMensaje(mensaje, usuario) {
         console.log("guardando mensaje" + mensaje + "de usuario: " + usuario)
+        console.log(new Date().toJSON())
         let prom = new Promise((resolve, reject) => {
-            db.query("INSERT INTO bot.mensajes  values (null, ?, ?)", [mensaje, usuario], (err, result) => {
+            db.query("INSERT INTO bot.mensajes  values (null, ?, ?, ?)", [mensaje, usuario, new Date().toJSON().slice(0, 10).replace(/-/g, '/')], (err, result) => {
                 resolve(result)
                 reject(err)
             })

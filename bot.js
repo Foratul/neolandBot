@@ -1,20 +1,26 @@
 var express = require('express');
 const Telegraf = require('telegraf')
+
 let creadores = require('./creadores') //ARRAY CHORRA CON LOS CREADORES
-let funsiones = require('./funsiones.js')  // ARRAY CON LOS COMANDOS DISPONIBLES 
 let mensajes = require('./mensajes.js') // ARRAY CON LOS MENSAJES 
 let usuarioDAO = require("./usuarioDAO").usuarioDAO //OBJETO DE ACCESO A DATOS 
 var app = express();
 
 
-const bot = new Telegraf('1041852626:AAFV8bkJxE5t8AeuiQZIXI3xogsQk7Gvpec')
-bot.telegram.setWebhook('https://23a0945d.ngrok.io/rutabot')
+bot = new Telegraf('1041852626:AAFV8bkJxE5t8AeuiQZIXI3xogsQk7Gvpec')
+bot.telegram.setWebhook('https://4153f7c3.ngrok.io/rutabot')
+bot.startWebhook('/ruta', 8443)
 
+function cargarfuncionesBot() { }
+// setTimeout(cargarfuncionesBot, 1000)
+let fB = require("./funcionesBot").funcionesBot
+
+// cargarfuncionesBot()
 bot.start((ctx) => {
     ctx.reply('Hola hamijo ' + ctx.from.first_name + " " + ctx.from.last_name)
     ctx.reply('Yo me llamo ' + ctx.options.username)
 
-    dameInfo(ctx) //se llama mostrar info
+    fB.dameInfo(ctx) //se llama mostrar info
 
     // se comprueba si el usuario esta en la BD
     usuarioDAO.getByTelegramID(ctx.from.id)
@@ -33,51 +39,30 @@ bot.start((ctx) => {
 
 
 bot.command("/spam", (ctx) => {
-    spamear(['spam'])
+    fB.spamear(['spam'], ctx.from.id)
 })
 
 //se mandan mensajes random a TODOS LOS USUARIOS
 bot.command("/random2", (ctx) => {
-    spamear(mensajes.generalistas)
+    fB.spamear(mensajes.generalistas)
 })
 
-//se mandan mensajes random a UN USUARIO
-
+//se mandan mensaje concreto a usuario random
 bot.command("/random", (ctx) => {
-    let mensaje = ctx.message.text.split(" ")[1]
+    let mensaje = ctx.message.text.split("/random")[1]
     console.log(mensaje)
-    mensajearUsuario(mensaje)
+    fB.spamear([mensaje, null, false])
 })
 
-//EL BOT SPAMEA CON MENSAJES DE MARIO
+//EL BOT SPAMEA CON MENSAJES DE MARIO al usuario actual
 bot.command("/Mario", (ctx) => {
-    spamear(mensajes.marioLingo, Mario = true)
+    console.log("Mario")
+    fB.spamear(mensajes.marioLingo, ctx.from.id)
 })
 
-//esta funcion recibe un arraymensajes y manda uno aleatorio a todos los usuarios registradso
-function spamear(arrayMensajes, Mario = false) {
-    let prefacio = (Mario) ? "Mario dice : " : ""
-    usuarioDAO.getAll().then((rows) => {
-        for (const usuario of rows) {
-            bot.telegram.sendMessage(usuario.telegramID,
-                prefacio + arrayMensajes[Math.floor(Math.random() * (arrayMensajes.length))])
-        }
-    })
-}
-
-function mensajearUsuario(mensaje = "no me ha llegado nada", destinatario = null) {
-
-    if (destinatario === null) { //si viene nulo se lo mando a uno aleatorio de la base de datos
-        usuarioDAO.getAll().then((rows) => {
-            let aleatorio = Math.floor(Math.random() * (rows.length))
-            bot.telegram.setAsyncRequest(true).sendMessage(rows[aleatorio].telegramID, mensaje)
-        })
-    }
-    // si no, se lo mando a una id concreta que me han pasado por parametro
-    else bot.telegram.sendMessage(destinatario, mensaje)
-}
 
 bot.command("/users", (ctx) => {
+    console.log("/users")
     ctx.reply("USUARIOS QUE HAN ENTRADO ALGUNA VEZ")
     // MUESTRA TODOS LOS USUARIOS EN LA BD
     usuarioDAO.getAll().then((rows) => {
@@ -97,9 +82,7 @@ bot.command('/test', (parametros) => {
 bot.command('/SendMario', (ctx) => {
     let mensaje = ctx.message.text
     console.log("Para Mario va " + mensaje)
-    mensajearUsuario(mensaje, variableCensurada)
-
-
+    fB.mensajearUsuario(mensaje, variableCensurada)
 })
 
 bot.command('/creadores', (parametros) => {
@@ -112,7 +95,8 @@ bot.command('/creadores', (parametros) => {
 })
 
 bot.command('/info', (ctx) => {
-    dameInfo(ctx)
+    console.log("/info")
+    fB.dameInfo(ctx)
 })
 
 bot.command("/crearDatabase", (ctx) => {
@@ -148,18 +132,6 @@ bot.command("/misMensajes", (ctx) => {
         })
 
 })
-function dameInfo(ctx) {
-    // se pega la info asi que timeouts chungos
-    setTimeout(() => {
-        ctx.reply("TENGO DISPONIBLES ESTAS FUNSIONES")
-    }, 500)
-    setTimeout(() => {
-        for (const funsion of funsiones) {
-            ctx.reply(funsion)
-        }
-    }, 800)
-
-}
 
 // app.post('/rutabot', (req, res) => {
 //     console.log(req)
@@ -179,7 +151,7 @@ bot.on('text', (ctx) => {
     ctx.reply(respuesta)
     //guarda el mensaje en la
     usuarioDAO.guardarMensaje(escrito, ctx.message.from.id)
-        .then((result) => { console.log(result) })
+        .then((result) => { console.log("mensaje guardado en la BD") })
         .catch((err) => { console.log(err) })
 })
 bot.hears('hola', (ctx) => ctx.reply('hola hamijo')) //no se activa si se hace hola antes
@@ -187,5 +159,5 @@ bot.launch()
 
 app.listen(8000, () => { console.log("servidor listening") })
 
-module.exports = { spamear: spamear }
 // exporto la funciones  que quiero usar fuera y a vivir la vida
+
